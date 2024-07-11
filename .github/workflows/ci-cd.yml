@@ -1,0 +1,42 @@
+name: CI/CD for React Project
+
+on:
+  push:
+    branches: [ "main", "develop", "testing" ]
+  pull_request:
+    branches: [ "main", "develop", "testing" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build the project
+        run: npx nx build catalog
+
+      - name: Run tests
+        run: npm test
+
+      - name: Build Docker image
+        run: docker build -t fe_react .
+
+  cd:
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
