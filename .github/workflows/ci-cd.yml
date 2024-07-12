@@ -69,4 +69,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_SESSION_TOKEN: ${{ secrets.AWS_SESSION_TOKEN }}
         run: |
+          set -x # Habilitar depuración
+          aws s3 ls s3://fe-react-bucket
           aws s3 sync dist/apps/catalog s3://fe-react-bucket --delete
+          set +x # Deshabilitar depuración
